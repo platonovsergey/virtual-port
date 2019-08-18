@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO.Ports;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -48,14 +49,12 @@ namespace VCP_Communication
 
         private void PortChat_Listen(object sender, SerialDataReceivedEventArgs e)
         {
-            string data;
-            string temp = _serialPort.ReadExisting();
-            Console.WriteLine("start");
-            Console.WriteLine(temp);
-            Console.WriteLine("end");
-            data = "Received: " + temp;
-
-            SetTextUI(console, data);
+            string portData = _serialPort.ReadExisting();
+            string[] existingData = portData.Split('\n').Distinct().ToArray();
+            foreach(string data in existingData)
+            {
+                SetTextUI(console, "Received: " + data);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
