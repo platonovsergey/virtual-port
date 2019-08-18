@@ -8,7 +8,9 @@ namespace VCP_Communication
 {
     public partial class VCP_Communication : Form
     {
+        private static SerialDataReceivedEventHandler serialDataReceivedEventHandler;
         static bool btnIsClicked;
+        int i = 0;
         Vcp vcp;
 
         public VCP_Communication()
@@ -47,7 +49,11 @@ namespace VCP_Communication
         private void PortChat_Listen(object sender, SerialDataReceivedEventArgs e)
         {
             string data;
-            data = "Received: " + _serialPort.ReadExisting();
+            string temp = _serialPort.ReadExisting();
+            Console.WriteLine("start");
+            Console.WriteLine(temp);
+            Console.WriteLine("end");
+            data = "Received: " + temp;
 
             SetTextUI(console, data);
         }
@@ -86,7 +92,10 @@ namespace VCP_Communication
             if (btnIsClicked == false)
             {
                 _serialPort.Open();
-                _serialPort.DataReceived += new SerialDataReceivedEventHandler(PortChat_Listen);
+                serialDataReceivedEventHandler = new SerialDataReceivedEventHandler(PortChat_Listen);
+                _serialPort.DataReceived += serialDataReceivedEventHandler;
+                Console.WriteLine(i);
+                i += 1;
                 btnIsClicked = true;
                 console.AppendText("Connected to " + _serialPort.PortName + ", " + _serialPort.BaudRate + ", " + _serialPort.Parity + ", " + _serialPort.StopBits + "\n");
                 btnConnection.Text = "Disconnect";
@@ -94,6 +103,8 @@ namespace VCP_Communication
             else
             {
                 _serialPort.Close();
+                _serialPort.DataReceived -= serialDataReceivedEventHandler;
+                serialDataReceivedEventHandler = null;
                 btnIsClicked = false;
                 console.AppendText("Disconnected to " + _serialPort.PortName + "\n");
                 btnConnection.Text = "Connect";
