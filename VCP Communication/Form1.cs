@@ -94,8 +94,6 @@ namespace VCP_Communication
                 _serialPort.Open();
                 serialDataReceivedEventHandler = new SerialDataReceivedEventHandler(PortChat_Listen);
                 _serialPort.DataReceived += serialDataReceivedEventHandler;
-                Console.WriteLine(i);
-                i += 1;
                 btnIsClicked = true;
                 console.AppendText("Connected to " + _serialPort.PortName + ", " + _serialPort.BaudRate + ", " + _serialPort.Parity + ", " + _serialPort.StopBits + "\n");
                 btnConnection.Text = "Disconnect";
