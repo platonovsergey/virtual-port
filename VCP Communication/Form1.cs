@@ -8,7 +8,6 @@ namespace VCP_Communication
 {
     public partial class VCP_Communication : Form
     {
-        private static SerialDataReceivedEventHandler serialDataReceivedEventHandler;
         static bool btnIsClicked;
         int i = 0;
         Vcp vcp;
@@ -25,6 +24,7 @@ namespace VCP_Communication
             _serialPort.BaudRate = int.Parse(cbBoudRate.Text);
             _serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), cbParity.Text);
             _serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), cbStopBits.Text);
+            _serialPort.DataReceived += new SerialDataReceivedEventHandler(PortChat_Listen);
         }
 
         public static void SetTextUI(RichTextBox rtb, string data)
@@ -92,8 +92,6 @@ namespace VCP_Communication
             if (btnIsClicked == false)
             {
                 _serialPort.Open();
-                serialDataReceivedEventHandler = new SerialDataReceivedEventHandler(PortChat_Listen);
-                _serialPort.DataReceived += serialDataReceivedEventHandler;
                 btnIsClicked = true;
                 console.AppendText("Connected to " + _serialPort.PortName + ", " + _serialPort.BaudRate + ", " + _serialPort.Parity + ", " + _serialPort.StopBits + "\n");
                 btnConnection.Text = "Disconnect";
@@ -101,8 +99,6 @@ namespace VCP_Communication
             else
             {
                 _serialPort.Close();
-                _serialPort.DataReceived -= serialDataReceivedEventHandler;
-                serialDataReceivedEventHandler = null;
                 btnIsClicked = false;
                 console.AppendText("Disconnected to " + _serialPort.PortName + "\n");
                 btnConnection.Text = "Connect";
